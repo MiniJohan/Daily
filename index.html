@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div id="app">
+    <main class="main-container" id="main-container">
+        <section class="input-container">
+            <div class="time-selector" id="time-selector">09:00</div>
+            <input id="input" class="input" placeholder="Type or use / to start.." autocomplete="off">
+        </section>
+        <section class="planner-container" id="planner-container">
+          <header class="top-container">
+            <input id="header-input" class="daily-header" value="Daily Planner" autocomplete="off" placeholder="Title name">
+          </header>
+          <div class="bottom-container">
+            <div class="timeline-container" id="time-view"></div>
+            <div class="planner-view" id="planner-view"></div>
+          </div>
+        </section>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+
+</body>
+
+</html>
