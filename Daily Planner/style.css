@@ -83,6 +83,7 @@ body {
     max-height: 512px;
     border-radius: 8px;
     border: 1px solid hsl(0, 0%, 15%);
+    transition: all 0.5s ease;
 }
 
 .top-container {

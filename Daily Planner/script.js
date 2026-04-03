@@ -25,8 +25,11 @@ const elements = {
 // 2. STATES
 //===================================================
 
+const mostRecentInputValues = [];
+
+
 const state = {
-    hours: 9,
+    hours: 8,
     minutes: 0,
 
     scrollAccumulator: 0,
@@ -34,9 +37,50 @@ const state = {
 };
 
 
+const plannerAppearanceElements = {
+    mainWidth: 352,
+
+    //Planner
+    height: 512,
+    borderRadius: 8,
+    border: "1px solid hsl(0, 0%, 15%)",
+
+};
+
+
+const plannerUICommands = {
+    width(value) {
+        if (value < 352) {
+            console.log("Min width is 352px");
+            return;
+        }
+        if (value > window.innerWidth) {
+            console.log("Too big for screen");
+            return;
+        }
+
+        elements.mainContainer.style.width = value + "px";
+    },
+
+    color(value) {
+        document.body.style.color = value;
+    },
+
+    borderRadius(value) {
+        elements.plannerContainer.style.borderRadius = value + "px";
+    },
+
+    borderColor(value) {
+        elements.plannerContainer.style.borderColor = value;
+    }
+};
+
+
+
 //===================================================
 // 3. EVENT LISTENERS
 //===================================================
+document.addEventListener("keydown", handleKeyonWholePage);
 
 elements.timeSelector.addEventListener("wheel", handleTimeScroll);
 
@@ -79,9 +123,31 @@ function handleCommandKeydown(event) {
         createEvent(getCurrentTime(), value);
     }
 
+    mostRecentInputValues.push(value);
+
+    if (mostRecentInputValues.length > 10) {
+        mostRecentInputValues.shift();
+    }
+
     elements.input.value = "";
+    console.log(mostRecentInputValues);
 }
 
+
+function handleKeyonWholePage(event) {
+    if (event.ctrlKey && event.key.toLowerCase() === "z") {
+        event.preventDefault();
+
+        if (mostRecentInputValues.length > 0) {
+            const undoIndex = mostRecentInputValues.length - 1;
+
+            elements.input.value = mostRecentInputValues[undoIndex];
+            mostRecentInputValues.pop();
+        } else {
+            elements.input.value = "";
+        }
+    }
+}
 
 //===================================================
 // 5. COMMAND SYSTEM
@@ -106,11 +172,33 @@ function handleCommand(raw) {
                 console.log("INVALID /ADD USAGE");
             }
             break;
-        
+
+        //PLANNER UI
+        case "width":
+            plannerUI(command, parts);
+            break;
+
+        case "color":
+            plannerUI(command, parts);
+            break;
+
+        case "borderRadius":
+            plannerUI(command, parts);
+            break;
+
+        case "borderColor":
+            plannerUI(command, parts);
+            break;
+    
+
         default:
-            console.log("Usage: /add HH:MM text");
+            console.log("Usage: example; /add, clear - NOT / add, clear");
+            console.log("")
+            console.log("Use ex. border radius like this: borderRadius")
     }
 }
+
+
 
 //===================================================
 // 6. TIME LOGIC
@@ -218,6 +306,28 @@ function sortEvents() {
         elements.plannerView.appendChild(item.eventDiv);
     });
 }
+
+
+
+function plannerUI(command, parts) {
+    const value = parts[1];
+
+    if (!value) {
+        console.log("Missing value");
+        return;
+    }
+
+    const findCommand = plannerUICommands[command];
+
+    if (!findCommand) {
+        console.log("Unknown UI command");
+        return;
+    }
+
+    findCommand(value);
+}
+
+
 
 //===================================================
 // 8. INIT
